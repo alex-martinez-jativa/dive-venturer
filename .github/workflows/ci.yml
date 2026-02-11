@@ -1,31 +1,46 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
+      # 1️⃣ Checkout repo
       - uses: actions/checkout@v4
 
+      # 2️⃣ Setup Node sin cache automático
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "npm"
+          cache: "false"
 
+      # 3️⃣ Cache manual de node_modules
       - name: Cache npm dependencies
         uses: actions/cache@v3
         with:
-          path: apps/dive-log-web/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('apps/dive-log-web/package-lock.json') }}
+          path: apps/dive-venturer/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('apps/dive-venturer/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
+      # 4️⃣ Install dependencies
       - name: Install dependencies
         run: npm ci
-        working-directory: apps/dive-log-web
+        working-directory: apps/dive-venturer
 
+      # 5️⃣ Optional: Lint
+      - name: Lint
+        run: npm run lint
+        working-directory: apps/dive-venturer
+
+      # 6️⃣ Build
       - name: Build
         run: npm run build
-        working-directory: apps/dive-log-web
+        working-directory: apps/dive-venturer
