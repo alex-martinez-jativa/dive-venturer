@@ -1,0 +1,23 @@
+name: SLO Monitor
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  check_health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check health endpoint
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://dive-venturer.vercel.app/api/health)
+          echo "HTTP status: $STATUS"
+          if [ "$STATUS" -ne 200 ]; then
+            echo "Health check failed!"
+            gh issue create --title "SLO Alert: /api/health failure" \
+                            --body "The health endpoint returned HTTP $STATUS" \
+                            --assignee @me
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
