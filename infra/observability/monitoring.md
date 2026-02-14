@@ -35,3 +35,28 @@ triggered by automatically creating a GitHub issue.
 - SLO definition: `infra/observability/slo.md`
 - Incident response: `infra/runbooks/app-down.md`
 - Example incident: `infra/postmortems/2026-02-health-endpoint-outage.md`
+
+## SLO Monitor Execution Strategy
+
+The SLO monitor is **not executed on a fixed schedule**.
+
+The GitHub Actions workflow responsible for checking the `/api/health` endpoint is configured to run **manually only** using `workflow_dispatch`.
+
+This decision is intentional and applies to the current stage of the project.
+
+### Rationale
+
+- Avoid unnecessary CI executions
+- Prevent artificial traffic to the application
+- Keep the project within free-tier limits
+- Allow full control when running resilience or incident simulations
+
+### When It Runs
+
+The SLO monitor is executed:
+
+- during development sessions
+- before or after incident simulations
+- when validating system behavior manually
+
+Scheduled execution may be reintroduced in later stages when real users and defined SLOs exist.
