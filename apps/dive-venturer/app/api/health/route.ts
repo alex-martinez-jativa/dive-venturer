@@ -1,4 +1,4 @@
-//import { logger } from "@/lib/logger";
+import { logger } from "@/lib/logger";
 
 export async function GET() {
   /* logger.info("health_check_called");
@@ -7,6 +7,6 @@ export async function GET() {
     status: "ok",
     timestamp: new Date().toISOString(),
   }); */
-  console.error("health_check_failed");
+  logger.error("health_check_failed");
   return new Response("error", { status: 500 });
 }
